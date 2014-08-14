@@ -11,10 +11,9 @@ $MaxActiveThreads = '200'
 $PingTimeout = 400
 
 #Defining mis vars
-$Results = @()
-$start = get-date   
+$Results = @() 
 
-
+$computers = import-csv C:\temp\Book1.csv
 
 
 #Define Function for Jobs
@@ -55,9 +54,9 @@ if((get-job | where{$_.state -eq "Running"}).count -gt $MaxActiveThreads){
     }
 
  #start the jobs fore each connection
-  Start-job -Name $Computer.name -ArgumentList $computer, $PingTimeout -InitializationScript $func1  -ScriptBlock {
-  param($computer, $PingTimeout)
-    Get-ComputerInfo $computer $PingTimeout
+  Start-job -Name $Computer.name -ArgumentList $computer   -ScriptBlock {
+  param($computer)
+    $computer.Online =  Test-Connection $server.ip -count 1 -Quiet
    
     }#End Job ScriptBlock
    
@@ -85,9 +84,5 @@ while((get-job | where{$_.state -eq "Running"}) -and ($CountDown -gt 1)){
    } 
  
 
-
-# out put statistical information on the script
-$end = Get-date
-Write-Output $computers.count workstations --- | out-file -FilePath ($TXTRunStatsPath + $TXTRunStatsName)
-$end - $start | out-file -FilePath ($TXTRunStatsPath + $TXTRunStatsName) -Append
+$Results | Out-GridView
 

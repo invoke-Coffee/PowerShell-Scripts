@@ -1,5 +1,9 @@
 ﻿$threads = 5
 
+#Defining mis vars
+$Results = @()
+   
+
 $servers = import-csv C:\temp\Book1.csv
 
 $queue = [System.Collections.Queue]::Synchronized( (New-Object system.collections.queue) )
@@ -23,7 +27,7 @@ while($threads -ne 0){
     $ServersToPasstoJob = @()
     while(($ServersToPasstoJob.count -lt $ServersPerThread) -and ($queue.count -gt 0)){
         $ServersToPasstoJob += $queue.Dequeue()
-        Write-host "Dequeueing"
+        
     }
     $ServersToPasstoJob
     write-host "-----------------------------------"
@@ -56,3 +60,5 @@ while((get-job | where{$_.state -eq "Running"}) -and ($CountDown -gt 1)){
    } 
 
 $Results | Out-GridView
+
+
