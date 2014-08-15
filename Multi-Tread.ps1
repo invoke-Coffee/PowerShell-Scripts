@@ -56,7 +56,7 @@ if((get-job | where{$_.state -eq "Running"}).count -gt $MaxActiveThreads){
  #start the jobs fore each connection
   Start-job -Name $Computer.name -ArgumentList $computer   -ScriptBlock {
   param($computer)
-    $computer.Online =  Test-Connection $server.ip -count 1 -Quiet
+    $computer.Online =  Test-Connection $computer.Name -count 1 -Quiet
    
     }#End Job ScriptBlock
    
